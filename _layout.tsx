@@ -1,68 +1,29 @@
-import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useFonts } from 'expo-font';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import 'react-native-reanimated';
 
-export default function TabLayout() {
+import { useColorScheme } from '@/hooks/useColorScheme';
+
+export default function RootLayout() {
+  const colorScheme = useColorScheme();
+  const [loaded] = useFonts({
+    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+  });
+
+  if (!loaded) {
+    // Async font loading only occurs in development.
+    return null;
+  }
+
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#4d148c',
-        tabBarInactiveTintColor: '#bbb',
-        tabBarLabelStyle: {
-          fontSize: 13,
-          fontWeight: '600',
-          letterSpacing: 0.5,
-        },
-        tabBarStyle: Platform.select({
-          ios: {
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 18,
-            borderTopRightRadius: 18,
-            position: 'absolute',
-            shadowColor: '#000',
-            shadowOpacity: 0.06,
-            shadowRadius: 8,
-            height: 65,
-          },
-          android: {
-            backgroundColor: '#fff',
-            borderTopLeftRadius: 18,
-            borderTopRightRadius: 18,
-            elevation: 8,
-            height: 65,
-          },
-        }),
-      }}
-    >
-      <Tabs.Screen
-        name="home"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="triage"
-        options={{
-          title: 'Triage',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="medkit-outline" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Resources',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="book-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+      </Stack>
+      <StatusBar style="auto" />
+    </ThemeProvider>
   );
 }
